@@ -1,5 +1,6 @@
 package be.apti.Livesessie21_06_2020;
 
+import be.apti.Livesessie21_06_2020.deel2.oefening7.NoResultsException;
 import be.apti.Livesessie21_06_2020.oefening2.KeyValues;
 import be.apti.Livesessie21_06_2020.oefening3.Boek;
 import be.apti.Livesessie21_06_2020.oefening3.Schrijver;
@@ -120,15 +121,19 @@ public class Main {
     }
 
     public static void oefening7Deel2() {
-        try{
+        try {
             FileInputStream fileInputStream = new FileInputStream("four-letter-words.txt");
             Scanner scanner = new Scanner(fileInputStream);
             List<String> words = new ArrayList<>();
-            while(scanner.hasNext()){
+            while (scanner.hasNext()) {
                 words.add(scanner.next());
             }
+            if (words.size() == 0) throw new NoResultsException();
             FileWriter fileWriter = new FileWriter("four-letter-words-filtered.txt");
-            words.stream().filter(word -> word.toLowerCase().contains("a")).forEach(str -> {
+            words.stream()
+                    // .filter(word -> word.toLowerCase().contains("a"))
+                    .filter(word -> isPalindroom(word))
+                    .forEach(str -> {
                 try {
                     fileWriter.write(str + "\n");
                     System.out.println(str);
@@ -138,12 +143,20 @@ public class Main {
             });
             fileWriter.close();
             // words.forEach(System.out::println);
-        }catch(FileNotFoundException ex){
+        } catch (FileNotFoundException ex) {
             System.out.println("Bestand niet gevonden! " + ex.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NoResultsException e) {
+            e.printStackTrace();
         }
+    }
 
-
+    public static boolean isPalindroom(String word){
+        char[] letters = word.toCharArray();
+        for(int i = 0; i < word.length(); i++){
+            if(letters[i] != letters[word.length() - 1 - i]) return false;
+        }
+        return true;
     }
 }
